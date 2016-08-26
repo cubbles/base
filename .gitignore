@@ -1,0 +1,9 @@
+# webstorm project file
+/.idea
+
+# Logs
+*.log
+
+# all node_modules folders
+node_modules
+

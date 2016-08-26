@@ -1,0 +1,59 @@
+version: '2'
+###
+services:
+  #_____________________________________________________
+  #
+  base.gateway:
+    image: cubbles/base.gateway:1.0.2
+    environment:
+      - NODEMON_OPTIONS=-e conf,locations,ssl,lua --watch /opt/gateway
+      - SSL_CERT=/opt/gateway/conf.d/cert/self_signed_server.crt
+      - SSL_CERT_KEY=/opt/gateway/conf.d/cert/self_signed_server.key
+      - BASE_AUTH_SECRET=devBase#123!
+    links:
+      - "base.authentication:authentication"
+      - "base.userprofilemanagement:userprofilemanagement"
+      - "base.coredatastore:coredatastore"
+    networks:
+      - default
+      - base.gateway
+  #_____________________________________________________
+  #
+  base.authentication:
+    image: cubbles/base.authentication:1.0.1
+    environment:
+      - NODEMON_OPTIONS=--watch /opt/authentication/base-authentication-service/authentication-service.js --watch /opt/authentication/base-authentication-service/lib
+      - BASE_AUTH_DATASTORE_URL=http://coredatastore:5984
+      - BASE_AUTH_DATASTORE_ADMINCREDENTIALS=${BASE_AUTH_DATASTORE_ADMINCREDENTIALS}
+    links:
+      - "base.coredatastore:coredatastore"
+  #_____________________________________________________
+  #
+  base.userprofilemanagement:
+    image: cubbles/base.userprofilemanagement:1.0
+    environment:
+      - NODEMON_OPTIONS=--watch /opt/userprofilemanagement/base-userprofilemanagement-service/service.js --watch /opt/userprofilemanagement/base-userprofilemanagement-service/lib
+      - BASE_AUTH_DATASTORE_URL=http://coredatastore:5984
+      - BASE_AUTH_DATASTORE_ADMINCREDENTIALS=${BASE_AUTH_DATASTORE_ADMINCREDENTIALS}
+    links:
+      - "base.coredatastore:coredatastore"
+  #_____________________________________________________
+  #
+  base.coredatastore:
+    image: cubbles/base.coredatastore:1.0
+    environment:
+      - BASE_AUTH_DATASTORE_ADMINCREDENTIALS=${BASE_AUTH_DATASTORE_ADMINCREDENTIALS}
+      - BASE_CLUSTER=${BASE_CLUSTER}
+    volumes:
+      - base.coredatastore_volume:/usr/local/var/lib/couchdb/
+
+#========================================================
+# volumes
+# @see https://docs.docker.com/engine/userguide/containers/dockervolumes/
+volumes:
+  base.coredatastore_volume:
+
+#
+#========================================================
+networks:
+  base.gateway:
