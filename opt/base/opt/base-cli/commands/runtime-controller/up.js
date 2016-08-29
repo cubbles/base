@@ -50,7 +50,7 @@ module.exports = function (vorpal) {
         done(error);
         return
       }
-      stdout && console.log('stdout: ########', stdout);
+      stdout && console.log(stdout);
       //stderr && console.log('stderr: ', stderr);
     });
   }
