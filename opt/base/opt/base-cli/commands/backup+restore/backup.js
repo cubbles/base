@@ -11,11 +11,9 @@ var execCompose = composeProxy.command;
 /*
  * Important:
  * ----------
- * Running a backup, requires
- * 1) the 'cubbles/base' container mounted with the 'cubbles/base.coredatastore' volumes.
- *    This is expected as we want to backup the couchdb db files within the container.
- * 2) the 'cubbles/base' container mounted with a folder onto the '/backups' folder, to persist the backup file on a persistent store.
- *    The script stores backupFile into the '/backups' (inside the container).
+ * The backup will be created into the /backups folder.
+ * We recommend to mount an external folder on this directory to write the backups on a host folder.
+ * > Check the 'docker-compose-<cluster>.yml' file for mounted volumes into the 'base.coredatastore' service.
  */
 module.exports = function (vorpal) {
   var backupFolder = '/backups';
@@ -33,7 +31,7 @@ module.exports = function (vorpal) {
     var cluster = args.cluster;
     var service = 'base.coredatastore';
     var backupFile = backupFolder + '/base.coredatastore_volume-' + new Date().toISOString().split(':').join('-').split('.')[ 0 ] + 'Z.tar.gz';
-    var backupCommand = '"tar cfz ' + backupFile + ' ' + couchdbFolder + '"';
+    var backupCommand = `'sh -c "mkdir -p ${backupFolder} && tar cfz ${backupFile} ${couchdbFolder}"'`;
     var commandArgs = '--rm --no-deps --entrypoint ' + backupCommand + ' ' + service;
 
     var execConfig = {
@@ -58,7 +56,8 @@ module.exports = function (vorpal) {
         return
       }
       stdout && console.log(stdout);
-      console.log('Created backup-file within container "%s": "%s"', service, backupFile);
+      console.log('Created backup file within container "%s": \n* %s', service, backupFile);
+      console.log('Note: The /backup folder should be mounted from an external location, you want to manage your backups in. For details see the docker-compose file of your cluster.');
       //stderr && console.log('stderr: ', stderr);
 
       done()

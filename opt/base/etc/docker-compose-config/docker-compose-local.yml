@@ -20,6 +20,8 @@ services:
   base.coredatastore:
     ports:
       - "5984:5984"
+    volumes:
+      - /mnt/sda1/tmp:/backups
 
 #========================================================
 # volumes
