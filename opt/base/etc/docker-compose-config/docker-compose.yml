@@ -4,6 +4,7 @@ services:
   #_____________________________________________________
   #
   base.gateway:
+    restart: unless-stopped
     image: cubbles/base.gateway:1.0.2
     environment:
       - NODEMON_OPTIONS=-e conf,locations,ssl,lua --watch /opt/gateway
@@ -20,6 +21,7 @@ services:
   #_____________________________________________________
   #
   base.authentication:
+    restart: unless-stopped
     image: cubbles/base.authentication:1.0.1
     environment:
       - NODEMON_OPTIONS=--watch /opt/authentication/base-authentication-service/authentication-service.js --watch /opt/authentication/base-authentication-service/lib
@@ -30,6 +32,7 @@ services:
   #_____________________________________________________
   #
   base.userprofilemanagement:
+    restart: unless-stopped
     image: cubbles/base.userprofilemanagement:1.0
     environment:
       - NODEMON_OPTIONS=--watch /opt/userprofilemanagement/base-userprofilemanagement-service/service.js --watch /opt/userprofilemanagement/base-userprofilemanagement-service/lib
@@ -40,6 +43,7 @@ services:
   #_____________________________________________________
   #
   base.coredatastore:
+    restart: unless-stopped
     image: cubbles/base.coredatastore:1.0
     environment:
       - BASE_AUTH_DATASTORE_ADMINCREDENTIALS=${BASE_AUTH_DATASTORE_ADMINCREDENTIALS}
