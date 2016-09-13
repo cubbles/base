@@ -22,7 +22,7 @@ module.exports = function (vorpal) {
   var backupFolder = '/backups';
 
   vorpal
-    .command('restore <cluster> <backupFile>')
+    .command('restore <backupFile>')
     .option('-v, --verbose [optionalBoolean]', 'Show details.')
     .description(
       'Restore the coredatastore with the given backupFile.')
@@ -37,7 +37,7 @@ module.exports = function (vorpal) {
         // If yes, go on ..
         global.command = { args: args };
         compose('stop base.coredatastore', args)
-          .then(function (fulfillmentValue) {return restore(args.cluster, args.backupFile)})
+          .then(function (fulfillmentValue) {return restore(args.backupFile)})
           .then(function (fulfillmentValue) {return compose('start base.coredatastore', args)})
           .catch(function (rejectValue) {
             console.log('Restore failed: %s', rejectValue);
@@ -48,10 +48,9 @@ module.exports = function (vorpal) {
 
   /**
    *
-   * @param cluster
    * @param sourceFilename
    */
-  function restore (cluster, sourceFilename) {
+  function restore (sourceFilename) {
     return new Promise(
       function (resolve, reject) {
         console.log(' > Restoring data');
@@ -90,18 +89,16 @@ module.exports = function (vorpal) {
 function compose (composeCommand, args) {
   console.log(' > %s', composeCommand);
   global.command = { args: args };
-  var cluster = args.cluster;
   var composeConfig = {
     composeCommand: {
-      options: '-f docker-compose.yml -f docker-compose-' + cluster + '.yml',
-      cluster: cluster,
+      options: '-f docker-compose.yml -f custom/docker-compose-custom.yml',
       command: composeCommand,
       commandArgs: ''
     },
     commandExecOptions: {
-      cwd: path.join(__dirname, '../../../..', 'etc/docker-compose-config'),
+      cwd: path.join(__dirname, '../../../..', 'etc'),
       env: {
-        BASE_CLUSTER: cluster
+        BASE_AUTH_DATASTORE_ADMINCREDENTIALS: 'not required'
       }
     }
   };

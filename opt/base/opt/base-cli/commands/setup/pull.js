@@ -16,7 +16,6 @@ module.exports = function (vorpal) {
 
   function start (args, done) {
     global.command = { args: args };
-    var cluster = 'not needed';
     var execConfig = {
         composeCommand: {
           options: '-f docker-compose.yml',
@@ -24,8 +23,10 @@ module.exports = function (vorpal) {
           commandArgs: ''
         },
         commandExecOptions: {
-          cwd: path.join(__dirname, '../../../..', 'etc/docker-compose-config'),
-          env: { BASE_CLUSTER: cluster }
+          cwd: path.join(__dirname, '../../../..', 'etc'),
+          env: {
+            BASE_AUTH_DATASTORE_ADMINCREDENTIALS: 'not required'
+          }
         }
       }
       ;

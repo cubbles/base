@@ -13,14 +13,14 @@ var execCompose = composeProxy.command;
  * ----------
  * The backup will be created into the /backups folder.
  * We recommend to mount an external folder on this directory to write the backups on a host folder.
- * > Check the 'docker-compose-<cluster>.yml' file for mounted volumes into the 'base.coredatastore' service.
+ * > Check the 'docker-compose-custom.yml' file for mounted volumes into the 'base.coredatastore' service.
  */
 module.exports = function (vorpal) {
   var backupFolder = '/backups';
   var couchdbFolder = '/usr/local/var/lib/couchdb';
 
   vorpal
-    .command('backup <cluster>')
+    .command('backup')
     .option('-v, --verbose [optionalBoolean]', 'Show details.')
     .description(
       'Backup the "base.coredatastore" > "' + couchdbFolder + '" folder.')
@@ -28,7 +28,6 @@ module.exports = function (vorpal) {
 
   function start (args, done) {
     global.command = { args: args };
-    var cluster = args.cluster;
     var service = 'base.coredatastore';
     var backupFile = backupFolder + '/base.coredatastore_volume-' + new Date().toISOString().split(':').join('-').split('.')[ 0 ] + 'Z.tar.gz';
     var backupCommand = `'sh -c "mkdir -p ${backupFolder} && tar cfz ${backupFile} ${couchdbFolder}"'`;
@@ -36,15 +35,14 @@ module.exports = function (vorpal) {
 
     var execConfig = {
       composeCommand: {
-        options: '-f docker-compose.yml -f docker-compose-' + cluster + '.yml',
-        cluster: cluster,
+        options: '-f docker-compose.yml -f custom/docker-compose-custom.yml',
         command: 'run',
         commandArgs: commandArgs
       },
       commandExecOptions: {
-        cwd: path.join(__dirname, '../../../..', 'etc/docker-compose-config'),
+        cwd: path.join(__dirname, '../../../..', 'etc'),
         env: {
-          BASE_CLUSTER: cluster
+          BASE_AUTH_DATASTORE_ADMINCREDENTIALS: 'not required'
         }
       }
     };
@@ -57,7 +55,7 @@ module.exports = function (vorpal) {
       }
       stdout && console.log(stdout);
       console.log('Created backup file within container "%s": \n* %s', service, backupFile);
-      console.log('Note: The /backup folder should be mounted from an external location, you want to manage your backups in. For details see the docker-compose file of your cluster.');
+      console.log('Note: The /backup folder should be mounted from an external location, you want to manage your backups in. For details see the docker-compose-custom.yml file of your configuration.');
       //stderr && console.log('stderr: ', stderr);
 
       done()

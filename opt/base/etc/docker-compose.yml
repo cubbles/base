@@ -47,7 +47,6 @@ services:
     image: cubbles/base.coredatastore:1.0
     environment:
       - BASE_AUTH_DATASTORE_ADMINCREDENTIALS=${BASE_AUTH_DATASTORE_ADMINCREDENTIALS}
-      - BASE_CLUSTER=${BASE_CLUSTER}
     volumes:
       - base.coredatastore_volume:/usr/local/var/lib/couchdb/
 

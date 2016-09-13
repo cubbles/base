@@ -64,18 +64,9 @@ module.exports = function (vorpal) {
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
     }
 
-    /* check source store to be available */
+    // check source store to be available
     var sourceUrl = source.indexOf('http') == 0 ? source : urlJoin(couchUrl, source);
     request = request.get(sourceUrl);
-
-    /*    // optionally add authorization header
-     (function () {
-     var credentialsBuffer;
-     if (args.options.username) {
-     credentialsBuffer = new Buffer(args.options.username + ':' + args.options.password);
-     request = request.set('Authorization', "Basic " + credentialsBuffer.toString('base64'))
-     }
-     })();*/
 
     // send request
     request.end(function (err, res) {

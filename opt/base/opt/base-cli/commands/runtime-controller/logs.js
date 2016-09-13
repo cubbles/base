@@ -8,7 +8,7 @@ var execCompose = composeProxy.command;
 
 module.exports = function (vorpal) {
   vorpal
-    .command('logs <cluster> [service]')
+    .command('logs [service]')
     .option('-v, --verbose [optionalBoolean]', 'Show details.')
     .option('--tail [optionalNumber]', 'Number of lines to show from the end of the logs for each container.')
     .description(
@@ -18,17 +18,17 @@ module.exports = function (vorpal) {
   function start (args, done) {
     global.command = { args: args };
     //console.log('parsed args: ',args)
-    var cluster = args.cluster;
     var execConfig = {
       composeCommand: {
-        options: '-f docker-compose.yml -f docker-compose-' + cluster + '.yml',
-        cluster: cluster,
+        options: '-f docker-compose.yml -f custom/docker-compose-custom.yml',
         command: 'logs',
         commandArgs: '-t --tail ' + (args.options.tail ? args.options.tail : 10) + (args.service ? ' ' + args.service : '')
       },
       commandExecOptions: {
-        cwd: path.join(__dirname, '../../../..', 'etc/docker-compose-config'),
-        env: { BASE_CLUSTER: cluster }
+        cwd: path.join(__dirname, '../../../..', 'etc'),
+        env: {
+          BASE_AUTH_DATASTORE_ADMINCREDENTIALS: 'not required'
+        }
       }
     };
     execCompose(execConfig, function (error, stdout, stderr) {

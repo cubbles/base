@@ -9,7 +9,7 @@ var execCompose = composeProxy.command;
 module.exports = function (vorpal) {
 
   vorpal
-    .command('up <cluster>')
+    .command('up')
     .description('Start the Cubbles Base.')
     .option('-a, --account <login:password>', 'Credentials for the coredatastore admin account.')
     .option('-f, --forceRecreate [optionalBoolean]', 'Force recreation of docker containers (default=false).')
@@ -28,18 +28,15 @@ module.exports = function (vorpal) {
     }
 
     global.command = { args: args };
-    var cluster = args.cluster;
     var execConfig = {
       composeCommand: {
-        options: '-f docker-compose.yml -f docker-compose-' + cluster + '.yml',
-        cluster: cluster,
+        options: '-f docker-compose.yml -f custom/docker-compose-custom.yml',
         command: 'up',
         commandArgs: '-d' + (args.options.forceRecreate ? ' --force-recreate' : '')
       },
       commandExecOptions: {
-        cwd: path.join(__dirname, '../../../..', 'etc/docker-compose-config'),
+        cwd: path.join(__dirname, '../../../..', 'etc'),
         env: {
-          BASE_CLUSTER: cluster,
           BASE_AUTH_DATASTORE_ADMINCREDENTIALS: adminCredentials
         }
       }

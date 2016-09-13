@@ -9,7 +9,7 @@ var execCompose = composeProxy.command;
 module.exports = function (vorpal) {
 
   vorpal
-    .command('down <cluster>')
+    .command('down')
     .option('-v, --verbose [optionalBoolean]', 'Show details.')
     .description(
       'Stop the Cubbles Base.')
@@ -17,18 +17,16 @@ module.exports = function (vorpal) {
 
   function start (args, done) {
     global.command = { args: args };
-    var cluster = args.cluster;
     var execConfig = {
       composeCommand: {
-        options: '-f docker-compose.yml -f docker-compose-' + cluster + '.yml',
+        options: '-f docker-compose.yml -f custom/docker-compose-custom.yml',
         command: 'down',
         commandArgs: ''
       },
       commandExecOptions: {
-        cwd: path.join(__dirname, '../../../..', 'etc/docker-compose-config'),
+        cwd: path.join(__dirname, '../../../..', 'etc'),
         env: {
-          BASE_CLUSTER: cluster,
-          BASE_AUTH_DATASTORE_ADMINCREDENTIALS: 'not needed'
+          BASE_AUTH_DATASTORE_ADMINCREDENTIALS: 'not required'
         }
       }
     };

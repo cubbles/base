@@ -14,7 +14,6 @@ module.exports = function (vorpal) {
 
   function start (args, done) {
     // global.command = { args: args };
-    // var cluster = args.cluster;
 
     /*
      Run mocha tests.
