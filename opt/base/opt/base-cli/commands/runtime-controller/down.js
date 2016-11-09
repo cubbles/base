@@ -4,6 +4,7 @@
 'use strict';
 var path = require('path');
 var composeProxy = require('../../lib/compose');
+var composeOptions = require('../../lib/compose-options');
 var execCompose = composeProxy.command;
 
 module.exports = function (vorpal) {
@@ -19,7 +20,7 @@ module.exports = function (vorpal) {
     global.command = { args: args };
     var execConfig = {
       composeCommand: {
-        options: '-f docker-compose.yml -f custom/docker-compose-custom.yml',
+        options: composeOptions.getOptions(),
         command: 'down',
         commandArgs: ''
       },

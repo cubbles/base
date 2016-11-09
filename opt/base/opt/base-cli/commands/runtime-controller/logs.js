@@ -4,6 +4,7 @@
 'use strict';
 var path = require('path');
 var composeProxy = require('../../lib/compose');
+var composeOptions = require('../../lib/compose-options');
 var execCompose = composeProxy.command;
 
 module.exports = function (vorpal) {
@@ -20,7 +21,7 @@ module.exports = function (vorpal) {
     //console.log('parsed args: ',args)
     var execConfig = {
       composeCommand: {
-        options: '-f docker-compose.yml -f custom/docker-compose-custom.yml',
+        options: composeOptions.getOptions(),
         command: 'logs',
         commandArgs: '-t --tail ' + (args.options.tail ? args.options.tail : 10) + (args.service ? ' ' + args.service : '')
       },

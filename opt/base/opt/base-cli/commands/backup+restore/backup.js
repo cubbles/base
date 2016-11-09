@@ -6,6 +6,7 @@ var path = require('path');
 var fs = require('fs');
 var exec = require('child_process').exec;
 var composeProxy = require('../../lib/compose');
+var composeOptions = require('../../lib/compose-options');
 var execCompose = composeProxy.command;
 
 /*
@@ -35,7 +36,7 @@ module.exports = function (vorpal) {
 
     var execConfig = {
       composeCommand: {
-        options: '-f docker-compose.yml -f custom/docker-compose-custom.yml',
+        options: composeOptions.getOptions(),
         command: 'run',
         commandArgs: commandArgs
       },

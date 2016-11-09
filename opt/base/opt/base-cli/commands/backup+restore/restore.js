@@ -7,6 +7,7 @@ var fs = require('fs');
 var exec = require('child_process').exec;
 var Promise = require('promise');
 var composeProxy = require('../../lib/compose');
+var composeOptions = require('../../lib/compose-options');
 var execCompose = composeProxy.command;
 
 /*
@@ -91,7 +92,7 @@ function compose (composeCommand, args) {
   global.command = { args: args };
   var composeConfig = {
     composeCommand: {
-      options: '-f docker-compose.yml -f custom/docker-compose-custom.yml',
+      options: composeOptions.getOptions(),
       command: composeCommand,
       commandArgs: ''
     },
